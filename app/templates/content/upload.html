@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Upload — SNAP Records{% endblock %}
+{% block body %}
+<h1>Upload content</h1>
+<p class="muted">Band: {{ band.name }}</p>
+<form method="post" enctype="multipart/form-data" class="panel">
+  <label>Title</label>
+  <input type="text" name="title" required>
+  <label>Description</label>
+  <textarea name="description"></textarea>
+  <label>Category</label>
+  <select name="category" required>
+    {% for c in categories %}<option value="{{ c }}">{{ c }}</option>{% endfor %}
+  </select>
+  <label>Audience level</label>
+  <select name="audience_level" required>
+    {% for a in audiences %}<option value="{{ a }}">{{ a }}</option>{% endfor %}
+  </select>
+  <label>Available from (press)</label>
+  <input type="datetime-local" name="available_from_press">
+  <label>Available from (fans)</label>
+  <input type="datetime-local" name="available_from_fans">
+  <label class="check"><input type="checkbox" name="is_public" value="1"> Mark public</label>
+  <label>File</label>
+  <input type="file" name="file" required>
+  <button type="submit">Upload</button>
+</form>
+{% endblock %}

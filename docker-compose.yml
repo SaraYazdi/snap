@@ -1,0 +1,34 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: snap
+      POSTGRES_PASSWORD: snap
+      POSTGRES_DB: snap_records
+    # ponytail: no host 5432 publish — local postgres already owns it; web reaches db via compose network
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U snap -d snap_records"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      FLASK_SECRET_KEY: dev-change-me
+      DATABASE_URL: postgresql+psycopg2://snap:snap@db:5432/snap_records
+      UPLOAD_FOLDER: /data/uploads
+    volumes:
+      - uploads:/data/uploads
+      - ./app:/app/app
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  uploads:

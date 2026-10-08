@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Register — SNAP Records{% endblock %}
+{% block body %}
+<div class="panel auth-box">
+  <h1>Fan registration</h1>
+  <form method="post">
+    <label>Display name</label>
+    <input type="text" name="display_name" required>
+    <label>Email</label>
+    <input type="email" name="email" required>
+    <label>Password</label>
+    <input type="password" name="password" required minlength="6">
+    <button type="submit">Create account</button>
+  </form>
+  <p class="hint"><a href="{{ url_for('auth.login') }}">Back to login</a></p>
+</div>
+{% endblock %}

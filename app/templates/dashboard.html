@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — SNAP Records{% endblock %}
+{% block body %}
+<h1>Dashboard</h1>
+<p class="muted">Content you can access, grouped by band and category.</p>
+
+{% if not grouped %}
+<div class="panel"><p class="muted">No content visible for your role yet.</p></div>
+{% endif %}
+
+{% for band_name, cats in grouped.items() %}
+  <h2>{{ band_name }}</h2>
+  {% for category, items in cats.items() %}
+    <h3>{{ category }}</h3>
+    <ul class="item-list panel">
+      {% for item in items %}
+      <li>
+        <a href="{{ url_for('content.detail', content_id=item.id) }}">{{ item.title }}</a>
+        <span>
+          <span class="tag">{{ item.audience_level }}</span>
+          {% if item.is_public %}<span class="tag">public</span>{% endif %}
+        </span>
+      </li>
+      {% endfor %}
+    </ul>
+  {% endfor %}
+{% endfor %}
+{% endblock %}

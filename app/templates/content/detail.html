@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}{{ item.title }} — SNAP Records{% endblock %}
+{% block body %}
+<p class="muted"><a href="{{ url_for('dashboard.index') }}">← Dashboard</a></p>
+<h1>{{ item.title }}</h1>
+<div class="panel">
+  <p>{{ item.description or 'No description.' }}</p>
+  <p>
+    <span class="tag">{{ item.band.name }}</span>
+    <span class="tag">{{ item.category }}</span>
+    <span class="tag">{{ item.audience_level }}</span>
+    {% if item.is_public %}<span class="tag">public</span>{% endif %}
+  </p>
+  <p class="muted">
+    Uploaded by {{ item.uploader.display_name }}
+    · {{ item.original_filename }}
+    {% if item.size_bytes %}· {{ (item.size_bytes / 1024)|round(1) }} KB{% endif %}
+  </p>
+  {% if item.available_from_press %}
+  <p class="muted">Press available from: {{ item.available_from_press }}</p>
+  {% endif %}
+  {% if item.available_from_fans %}
+  <p class="muted">Fans available from: {{ item.available_from_fans }}</p>
+  {% endif %}
+
+  <div class="actions">
+    {% if caps.stream %}
+    <a class="btn" href="{{ url_for('content.stream', content_id=item.id) }}">Stream / view file</a>
+    {% endif %}
+    {% if caps.download %}
+    <a class="btn secondary" href="{{ url_for('content.download', content_id=item.id) }}">Download</a>
+    {% endif %}
+    {% if is_owner or caps.manage %}
+    <a class="btn secondary" href="{{ url_for('content.edit', content_id=item.id) }}">Edit</a>
+    <a class="btn secondary" href="{{ url_for('content.permissions', content_id=item.id) }}">Permissions</a>
+    <a class="btn secondary" href="{{ url_for('logs.item_log', content_id=item.id) }}">Access log</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
