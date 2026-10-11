@@ -7,4 +7,6 @@ uploads/
 *.db
 *.egg-info/
 .pytest_cache/
-
+.cursor/
+docs/AGENT.md
+docs/PLAN.md
