@@ -15,11 +15,18 @@
       {% for item in section.entries %}
       <li>
         <a href="{{ url_for('content.detail', content_id=item.id) }}">{{ item.title }}</a>
-        <span>
-          <span class="tag">{{ item.band.name }}</span>
-          {% if item.is_public or item.audience_level == 'public' %}
-          <span class="tag">public</span>
-          {% endif %}
+        <span class="tag-row">
+          <span class="tag tag-meta">{{ item.band.name }}</span>
+          <span class="tag tag-access is-{{ item.audience_level }}">
+            {{ {
+              'public': 'Public',
+              'fan_club': 'Fan club',
+              'press': 'Press',
+              'crew': 'Crew',
+              'band': 'Band only',
+              'restricted': 'Restricted'
+            }.get(item.audience_level, item.audience_level) }}
+          </span>
         </span>
       </li>
       {% endfor %}

@@ -17,10 +17,12 @@
     </a>
     {% if current_user.is_authenticated %}
     <nav>
+      {% if request.endpoint != 'dashboard.index' %}
       <a class="nav-scrap" href="{{ url_for('dashboard.index') }}">
         <img class="nav-icon" src="{{ url_for('static', filename='inspo/snaps/snap_2.jpg') }}" alt="">
         Dashboard
       </a>
+      {% endif %}
       {% if current_user.memberships | selectattr('role', 'equalto', 'band_member') | list %}
       <a class="nav-scrap" href="{{ url_for('content.upload') }}">
         <img class="nav-icon" src="{{ url_for('static', filename='inspo/snaps/snap_3.jpg') }}" alt="">
@@ -40,7 +42,7 @@
       </a>
       {% endif %}
       <span class="who">{{ current_user.display_name }}</span>
-      <a class="nav-scrap" href="{{ url_for('auth.logout') }}">Log out</a>
+      <a class="nav-scrap" href="{{ url_for('auth.logout') }}" data-reaction="inspo/reactions/reaction_3.jpg">Log out</a>
     </nav>
     {% endif %}
   </header>

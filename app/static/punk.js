@@ -39,16 +39,17 @@
     return el;
   }
 
-  function pickReaction() {
+  function pickReaction(forced) {
+    if (forced) return forced;
     return REACTIONS[Math.floor(Math.random() * REACTIONS.length)];
   }
 
-  function flashThen(go) {
+  function flashThen(go, forced) {
     if (navigating) return;
     navigating = true;
     var el = overlay();
     var img = el.querySelector("img");
-    img.src = staticUrl(pickReaction());
+    img.src = staticUrl(pickReaction(forced));
     el.classList.add("is-on");
     window.setTimeout(function () {
       el.classList.remove("is-on");
@@ -76,9 +77,10 @@
     if (!sameOriginNav(a)) return;
     if (a.href === window.location.href) return;
     ev.preventDefault();
+    var forced = a.getAttribute("data-reaction");
     flashThen(function () {
       window.location.href = a.href;
-    });
+    }, forced);
   });
 
   document.addEventListener("submit", function (ev) {
@@ -86,8 +88,9 @@
     if (!form || form.tagName !== "FORM") return;
     if (form.getAttribute("data-no-flash") != null) return;
     ev.preventDefault();
+    var forced = form.getAttribute("data-reaction");
     flashThen(function () {
       HTMLFormElement.prototype.submit.call(form);
-    });
+    }, forced);
   });
 })();
