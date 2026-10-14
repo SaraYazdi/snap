@@ -10,7 +10,10 @@
     <input type="email" name="email" required>
     <label>Password</label>
     <input type="password" name="password" required minlength="6">
-    <button type="submit">Create account</button>
+    <button type="submit">
+      <img class="btn-snap" src="{{ url_for('static', filename='inspo/snaps/snap_1.jpg') }}" alt="">
+      Create account
+    </button>
   </form>
   <p class="hint"><a href="{{ url_for('auth.login') }}">Back to login</a></p>
 </div>

@@ -64,10 +64,10 @@ def test_registered_public_only():
     assert can_access(u, _item(audience_level="band"), "view")[0] is False
 
 
-def test_crew_categories():
+def test_crew_audience():
     u = _user("crew")
-    assert can_access(u, _item(category="tour_rider", audience_level="crew"), "view")[0] is True
-    assert can_access(u, _item(category="demo", audience_level="band"), "view")[0] is False
+    assert can_access(u, _item(category="band_pages", audience_level="crew"), "view")[0] is True
+    assert can_access(u, _item(category="new_music", audience_level="band"), "view")[0] is False
 
 
 def test_deleted_denied():

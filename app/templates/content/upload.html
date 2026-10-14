@@ -2,15 +2,15 @@
 {% block title %}Upload — SNAP Records{% endblock %}
 {% block body %}
 <h1>Upload content</h1>
-<p class="muted">Band: {{ band.name }}</p>
+<p class="hero-note">Band: {{ band.name }} · tape it to the wall</p>
 <form method="post" enctype="multipart/form-data" class="panel">
   <label>Title</label>
   <input type="text" name="title" required>
   <label>Description</label>
   <textarea name="description"></textarea>
-  <label>Category</label>
+  <label>Section</label>
   <select name="category" required>
-    {% for c in categories %}<option value="{{ c }}">{{ c }}</option>{% endfor %}
+    {% for c in categories %}<option value="{{ c }}">{{ category_labels.get(c, c) }}</option>{% endfor %}
   </select>
   <label>Audience level</label>
   <select name="audience_level" required>
@@ -23,6 +23,9 @@
   <label class="check"><input type="checkbox" name="is_public" value="1"> Mark public</label>
   <label>File</label>
   <input type="file" name="file" required>
-  <button type="submit">Upload</button>
+  <button type="submit">
+    <img class="btn-snap" src="{{ url_for('static', filename='inspo/snaps/snap_3.jpg') }}" alt="">
+    Upload
+  </button>
 </form>
 {% endblock %}

@@ -1,98 +1,43 @@
 # Content types & metadata
 
-SNAP Records stores label/band work product as `content_items`. Each item has a **category** (what it is), an **audience_level** (who it is for by default), optional **embargo timestamps**, and a file on the volume.
+SNAP Records stores label content as `content_items`. Each item sits in a **section** (stored as `category`), has an **audience_level** (who can see it), optional embargo timestamps, and a file on disk.
 
-## Categories
+## Sections (dashboard)
 
-| Category | Typical files | Default audience (suggested) | Notes |
-|----------|---------------|------------------------------|--------|
-| `demo` | Rough mixes, work tapes | `band` or `press` | Unreleased recordings |
-| `stem` | Instrument/vocal stems | `band` | Often shared with producers (press/partner or grant) |
-| `master` | Final masters | `band` or `press` | Embargo via `available_from_press` |
-| `lyrics` | Text/PDF lyrics | `band` or `fan_club` | |
-| `setlist` | Show setlists | `crew` | Crew-visible |
-| `tour_rider` | Technical/hospitality riders | `crew` | May hold sensitive fees later (field encryption deferred) |
-| `contract` | Agreements | `band` or `restricted` | Sensitive; prefer `restricted` + grants |
-| `photo` | Stills | `press` or `public` | Press kits often bundle these |
-| `video` | Clips, BTS | `fan_club` or `press` | |
-| `press_kit` | Zip/PDF kits | `press` | Use press availability window |
-| `schedule` | Tour/rehearsal schedules | `crew` | Crew-oriented |
-| `other` | Catch-all | `band` | Prefer a real category when possible |
+| Section (`category`) | Label | Typical content |
+|----------------------|-------|-----------------|
+| `new_music` | New Music | Singles, albums, demos, masters, stems |
+| `merch` | Merch | Tees, hoodies, drops, crew kit notes |
+| `band_pages` | Band Pages | Bio, about, photos, riders, contracts |
+| `news` | News | Announcements, BTS, press-facing drops |
 
-## Category groups (for UI and crew rules)
-
-```mermaid
-flowchart LR
-  subgraph recordings [Recordings]
-    demo
-    stem
-    master
-  end
-  subgraph docs [Documents]
-    lyrics
-    setlist
-    tour_rider
-    contract
-    press_kit
-    schedule
-  end
-  subgraph media [Media]
-    photo
-    video
-  end
-  other[other]
-```
-
-**Crew-oriented categories** (see [ACCESS_CONTROL.md](ACCESS_CONTROL.md)): `schedule`, `setlist`, `tour_rider`, plus any item with `audience_level = crew`.
+Who sees an item is still controlled by **audience** + grants + time windows — not by the section alone. A press master lives under New Music with `audience_level = press`.
 
 ## Audience levels
 
-Defined on the item; independent of category but categories suggest defaults.
-
 | Level | Intent |
 |-------|--------|
-| `public` | Safe for any registered user |
-| `fan_club` | Pre-release / BTS / early announcements for subscribers |
-| `press` | Embargoed press material |
-| `crew` | Tour/production logistics |
-| `band` | Internal to the act |
-| `restricted` | Named users via grants only |
+| `public` | Any registered user |
+| `fan_club` | Fan club (after fan window) |
+| `press` | Press/partners (after press window) |
+| `crew` | Tour / production |
+| `band` | Band members |
+| `restricted` | Explicit grants only (+ band members can still manage) |
 
-## Per-item metadata
+## Example seed items
 
-| Field | Purpose |
-|-------|---------|
-| title | Display name |
-| description | Optional context |
-| category | Taxonomy above |
-| audience_level | Default access tier |
-| available_from_press | Embargo for press-tier access |
-| available_from_fans | Embargo for fan-club-tier access |
-| is_public | Shortcut / flag consistent with `audience_level = public` when true |
-| mime_type, size_bytes, original_filename | File facts |
-| storage_path | Location on volume |
-| checksum_sha256 | Integrity check (optional in Phase 2) |
-| band_id | Owning band (SNAP for now) |
-| uploaded_by_user_id | Auditor / attribution |
-
-## Example items (seed ideas for Phase 2)
-
-| Title | Category | Audience | Windows |
-|-------|----------|----------|---------|
-| SNAP — Album X master | `master` | `press` | `available_from_press` = release − 7 days |
-| SNAP — Demo reel | `demo` | `band` | none |
-| Tour EU 2026 rider | `tour_rider` | `crew` | none |
-| Fan BTS clip #1 | `video` | `fan_club` | `available_from_fans` set |
-| Public single artwork | `photo` | `public` | none |
-| Sync license draft | `contract` | `restricted` | grant to specific partner |
-
-## Upload form fields (Phase 2)
-
-Required: file, title, category, audience_level (band fixed to SNAP for now).  
-Optional: description, available_from_press, available_from_fans, is_public.
+| Title | Section | Audience |
+|-------|---------|----------|
+| SNAP — Midnight (single) | New Music | public |
+| SNAP — Album X (press master) | New Music | press |
+| SNAP logo tee | Merch | public |
+| About SNAP | Band Pages | public |
+| EU 2026 tour rider | Band Pages | crew |
+| Tour dates announced | News | public |
+| Fan club BTS drop | News | fan_club |
 
 ## Related docs
 
-- [DATA_MODEL.md](DATA_MODEL.md)  
-- [ACCESS_CONTROL.md](ACCESS_CONTROL.md)  
-- [PAGES.md](PAGES.md)  
+- [DATA_MODEL.md](DATA_MODEL.md)
+- [ACCESS_CONTROL.md](ACCESS_CONTROL.md)
+- [PAGES.md](PAGES.md)

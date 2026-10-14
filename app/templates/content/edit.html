@@ -7,10 +7,10 @@
   <input type="text" name="title" value="{{ item.title }}" required>
   <label>Description</label>
   <textarea name="description">{{ item.description or '' }}</textarea>
-  <label>Category</label>
+  <label>Section</label>
   <select name="category" required>
     {% for c in categories %}
-    <option value="{{ c }}" {% if c == item.category %}selected{% endif %}>{{ c }}</option>
+    <option value="{{ c }}" {% if c == item.category %}selected{% endif %}>{{ category_labels.get(c, c) }}</option>
     {% endfor %}
   </select>
   <label>Audience level</label>

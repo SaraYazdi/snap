@@ -18,6 +18,16 @@ SAMPLE_USERS = [
     ("fan@example.com", "Registered Fan", "fan", "registered", "snap", "fan123"),
 ]
 
+# Old Delivery-01 sample titles → remove so dashboard isn't confusing
+LEGACY_SAMPLE_TITLES = [
+    "SNAP — Demo reel",
+    "Tour EU 2026 rider",
+    "SNAP — Album X master",
+    "Fan BTS clip #1",
+    "Public single artwork",
+    "Sync license draft",
+]
+
 
 def _write_sample_file(folder: Path, name: str, text: str) -> Path:
     folder.mkdir(parents=True, exist_ok=True)
@@ -66,85 +76,138 @@ def seed():
 
     db.session.commit()
 
+    # Soft-delete confusing legacy seed rows (keeps FK/history simple)
+    for title in LEGACY_SAMPLE_TITLES:
+        for old in ContentItem.query.filter_by(title=title, band_id=band.id, is_deleted=False).all():
+            old.is_deleted = True
+    db.session.commit()
+
     member = users_by_email["member@snap.band"]
     upload_root = Path(current_app.config["UPLOAD_FOLDER"])
     now = datetime.now(timezone.utc)
 
     samples = [
         {
-            "title": "SNAP — Demo reel",
-            "category": "demo",
-            "audience_level": "band",
-            "filename": "demo-reel.txt",
-            "body": "Demo reel placeholder for SNAP.\n",
+            "title": "SNAP — Midnight (single)",
+            "category": "new_music",
+            "audience_level": "public",
+            "filename": "midnight-single.txt",
+            "body": "Public single — stream / download placeholder.\n",
+            "is_public": True,
+        },
+        {
+            "title": "SNAP — Album X (press master)",
+            "category": "new_music",
+            "audience_level": "press",
+            "filename": "album-x-press.txt",
+            "body": "Press master placeholder — embargoed until window opens.\n",
+            "available_from_press": now + timedelta(days=7),
             "is_public": False,
         },
         {
-            "title": "Tour EU 2026 rider",
-            "category": "tour_rider",
+            "title": "SNAP — Studio demo pack",
+            "category": "new_music",
+            "audience_level": "band",
+            "filename": "studio-demos.txt",
+            "body": "Internal demos for the band only.\n",
+            "is_public": False,
+        },
+        {
+            "title": "SNAP logo tee",
+            "category": "merch",
+            "audience_level": "public",
+            "filename": "logo-tee.txt",
+            "body": "Merch drop — logo tee details placeholder.\n",
+            "is_public": True,
+        },
+        {
+            "title": "Tour hoodie (crew kit)",
+            "category": "merch",
+            "audience_level": "crew",
+            "filename": "tour-hoodie.txt",
+            "body": "Crew merch / kit notes.\n",
+            "is_public": False,
+        },
+        {
+            "title": "About SNAP",
+            "category": "band_pages",
+            "audience_level": "public",
+            "filename": "about-snap.txt",
+            "body": "Band bio and links placeholder.\n",
+            "is_public": True,
+        },
+        {
+            "title": "EU 2026 tour rider",
+            "category": "band_pages",
             "audience_level": "crew",
             "filename": "tour-rider.txt",
             "body": "Technical / hospitality rider (placeholder).\n",
             "is_public": False,
         },
         {
-            "title": "SNAP — Album X master",
-            "category": "master",
-            "audience_level": "press",
-            "filename": "album-x-master.txt",
-            "body": "Master placeholder — embargoed for press.\n",
-            "available_from_press": now + timedelta(days=7),
-            "is_public": False,
-        },
-        {
-            "title": "Fan BTS clip #1",
-            "category": "video",
-            "audience_level": "fan_club",
-            "filename": "bts-clip.txt",
-            "body": "Behind-the-scenes clip placeholder.\n",
-            "available_from_fans": now - timedelta(days=1),
-            "is_public": False,
-        },
-        {
-            "title": "Public single artwork",
-            "category": "photo",
-            "audience_level": "public",
-            "filename": "single-artwork.txt",
-            "body": "Public artwork placeholder.\n",
-            "is_public": True,
-        },
-        {
             "title": "Sync license draft",
-            "category": "contract",
+            "category": "band_pages",
             "audience_level": "restricted",
             "filename": "sync-license.txt",
             "body": "Restricted contract draft.\n",
             "is_public": False,
         },
+        {
+            "title": "Tour dates announced",
+            "category": "news",
+            "audience_level": "public",
+            "filename": "tour-dates.txt",
+            "body": "Public news: tour dates announcement.\n",
+            "is_public": True,
+        },
+        {
+            "title": "Fan club BTS drop",
+            "category": "news",
+            "audience_level": "fan_club",
+            "filename": "bts-drop.txt",
+            "body": "Fan-club early BTS / news placeholder.\n",
+            "available_from_fans": now - timedelta(days=1),
+            "is_public": False,
+        },
     ]
 
     for s in samples:
-        if ContentItem.query.filter_by(title=s["title"], band_id=band.id).first():
+        existing = ContentItem.query.filter_by(title=s["title"], band_id=band.id).first()
+        if existing and not existing.is_deleted:
             continue
-        item = ContentItem(
-            band_id=band.id,
-            uploaded_by_user_id=member.id,
-            title=s["title"],
-            description=s.get("body", "").strip(),
-            category=s["category"],
-            audience_level=s["audience_level"],
-            is_public=s.get("is_public", False),
-            available_from_press=s.get("available_from_press"),
-            available_from_fans=s.get("available_from_fans"),
-            storage_path="pending",
-            mime_type="text/plain",
-            original_filename=s["filename"],
-        )
-        db.session.add(item)
-        db.session.flush()
+        if existing and existing.is_deleted:
+            # revive + retarget to new section/audience
+            item = existing
+            item.is_deleted = False
+            item.description = s.get("body", "").strip()
+            item.category = s["category"]
+            item.audience_level = s["audience_level"]
+            item.is_public = s.get("is_public", False)
+            item.available_from_press = s.get("available_from_press")
+            item.available_from_fans = s.get("available_from_fans")
+            item.uploaded_by_user_id = member.id
+        else:
+            item = ContentItem(
+                band_id=band.id,
+                uploaded_by_user_id=member.id,
+                title=s["title"],
+                description=s.get("body", "").strip(),
+                category=s["category"],
+                audience_level=s["audience_level"],
+                is_public=s.get("is_public", False),
+                available_from_press=s.get("available_from_press"),
+                available_from_fans=s.get("available_from_fans"),
+                storage_path="pending",
+                mime_type="text/plain",
+                original_filename=s["filename"],
+            )
+            db.session.add(item)
+            db.session.flush()
         path = _write_sample_file(upload_root / item.id, s["filename"], s["body"])
         item.storage_path = str(path)
         item.size_bytes = path.stat().st_size
+        item.original_filename = s["filename"]
+        item.mime_type = "text/plain"
     db.session.commit()
     print("Seed complete. Sample logins: admin@snap.records / admin123, member@snap.band / member123, …")
 

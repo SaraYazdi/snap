@@ -179,11 +179,16 @@ class AccessLog(db.Model):
     user = db.relationship("User")
 
 
-CATEGORIES = [
-    "demo", "stem", "master", "lyrics", "setlist", "tour_rider",
-    "contract", "photo", "video", "press_kit", "schedule", "other",
-]
+# Public-facing label sections (dashboard grouping). Audience still controls who sees each item.
+CATEGORIES = ["new_music", "merch", "band_pages", "news"]
+CATEGORY_LABELS = {
+    "new_music": "New Music",
+    "merch": "Merch",
+    "band_pages": "Band Pages",
+    "news": "News",
+}
 AUDIENCE_LEVELS = ["public", "fan_club", "press", "crew", "band", "restricted"]
 ACTIONS = ["view", "stream", "download", "manage"]
 ROLES = ["administrator", "band_member", "crew", "press", "fan_club", "registered"]
-CREW_CATEGORIES = {"schedule", "setlist", "tour_rider"}
+# Crew used to key off file-type categories; with section categories they rely on audience_level.
+CREW_CATEGORIES = set()

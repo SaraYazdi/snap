@@ -22,6 +22,7 @@ from app.extensions import db
 from app.models import (
     AUDIENCE_LEVELS,
     CATEGORIES,
+    CATEGORY_LABELS,
     ACTIONS,
     Band,
     ContentGrant,
@@ -98,6 +99,7 @@ def upload():
         "content/upload.html",
         band=band,
         categories=CATEGORIES,
+        category_labels=CATEGORY_LABELS,
         audiences=AUDIENCE_LEVELS,
     )
 
@@ -198,6 +200,7 @@ def edit(content_id):
         "content/edit.html",
         item=item,
         categories=CATEGORIES,
+        category_labels=CATEGORY_LABELS,
         audiences=AUDIENCE_LEVELS,
     )
 

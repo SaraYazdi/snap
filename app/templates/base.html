@@ -4,28 +4,51 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}SNAP Records{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Permanent+Marker&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
+<body data-static="{{ url_for('static', filename='punk.js').replace('punk.js', '') }}">
   <header class="top">
-    <a class="brand" href="{{ url_for('dashboard.index') }}">SNAP Records</a>
+    <a class="brand" href="{{ url_for('dashboard.index') }}">
+      <img class="brand-snap" src="{{ url_for('static', filename='inspo/snaps/snap_1.jpg') }}" alt="">
+      SNAP Records
+    </a>
     {% if current_user.is_authenticated %}
     <nav>
-      <a href="{{ url_for('dashboard.index') }}">Dashboard</a>
+      <a class="nav-scrap" href="{{ url_for('dashboard.index') }}">
+        <img class="nav-icon" src="{{ url_for('static', filename='inspo/snaps/snap_2.jpg') }}" alt="">
+        Dashboard
+      </a>
       {% if current_user.memberships | selectattr('role', 'equalto', 'band_member') | list %}
-      <a href="{{ url_for('content.upload') }}">Upload</a>
+      <a class="nav-scrap" href="{{ url_for('content.upload') }}">
+        <img class="nav-icon" src="{{ url_for('static', filename='inspo/snaps/snap_3.jpg') }}" alt="">
+        Upload
+      </a>
       {% endif %}
       {% if current_user.is_admin() or current_user.memberships | selectattr('role', 'equalto', 'band_member') | list %}
-      <a href="{{ url_for('logs.all_logs') }}">Access Log</a>
+      <a class="nav-scrap" href="{{ url_for('logs.all_logs') }}">
+        <img class="nav-icon" src="{{ url_for('static', filename='inspo/snaps/snap_4.jpg') }}" alt="">
+        Access Log
+      </a>
       {% endif %}
       {% if current_user.is_admin() %}
-      <a href="{{ url_for('admin.index') }}">Admin</a>
+      <a class="nav-scrap" href="{{ url_for('admin.index') }}">
+        <img class="nav-icon" src="{{ url_for('static', filename='inspo/snaps/snap_5.png') }}" alt="">
+        Admin
+      </a>
       {% endif %}
       <span class="who">{{ current_user.display_name }}</span>
-      <a href="{{ url_for('auth.logout') }}">Log out</a>
+      <a class="nav-scrap" href="{{ url_for('auth.logout') }}">Log out</a>
     </nav>
     {% endif %}
   </header>
+
+  <img class="sticker-deco guitar" src="{{ url_for('static', filename='inspo/instruments/guitar.png') }}" alt="">
+  <img class="sticker-deco mic" src="{{ url_for('static', filename='inspo/instruments/mic.png') }}" alt="">
+  <img class="sticker-deco snare" src="{{ url_for('static', filename='inspo/instruments/snare.png') }}" alt="">
+  <img class="sticker-deco sticks" src="{{ url_for('static', filename='inspo/instruments/drumstick.png') }}" alt="">
 
   <main class="wrap">
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -35,5 +58,8 @@
     {% endwith %}
     {% block body %}{% endblock %}
   </main>
+
+  <div id="reaction-flash" aria-hidden="true"><img alt=""></div>
+  <script src="{{ url_for('static', filename='punk.js') }}" defer></script>
 </body>
 </html>
