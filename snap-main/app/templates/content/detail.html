@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}{{ item.title }} — SNAP Records{% endblock %}
+{% block body %}
+<p class="hero-note"><a href="{{ url_for('dashboard.index') }}">← back to dashboard</a></p>
+<h1>{{ item.title }}</h1>
+<div class="panel">
+  <p>{{ item.description or 'No description.' }}</p>
+  <div class="tag-row">
+    <span class="tag-group-label">About</span>
+    <span class="tag tag-meta">{{ item.band.name }}</span>
+    <span class="tag tag-meta">{{ {'new_music':'New Music','merch':'Merch','band_pages':'Band Pages','news':'News'}.get(item.category, item.category) }}</span>
+  </div>
+  <div class="tag-row tag-row-access">
+    <span class="tag-group-label">Access</span>
+    <span class="tag tag-access is-{{ item.audience_level }}">
+      {{ {
+        'public': 'Public',
+        'fan_club': 'Fan club',
+        'press': 'Press',
+        'crew': 'Crew',
+        'band': 'Band only',
+        'restricted': 'Restricted'
+      }.get(item.audience_level, item.audience_level) }}
+    </span>
+    {% if item.is_public and item.audience_level != 'public' %}
+    <span class="tag tag-access is-public">Also marked public</span>
+    {% endif %}
+  </div>
+  <p class="muted">
+    Uploaded by {{ item.uploader.display_name }}
+    · {{ item.original_filename }}
+    {% if item.size_bytes %}· {{ (item.size_bytes / 1024)|round(1) }} KB{% endif %}
+  </p>
+  {% if item.available_from_press %}
+  <p class="muted">Press available from: {{ item.available_from_press }}</p>
+  {% endif %}
+  {% if item.available_from_fans %}
+  <p class="muted">Fans available from: {{ item.available_from_fans }}</p>
+  {% endif %}
+
+  {% if caps.stream %}
+  <div class="media-stage">
+    {% if item.mime_type and item.mime_type.startswith('video/') %}
+    <video id="snap-player" controls playsinline autoplay preload="auto"
+           src="{{ url_for('content.stream', content_id=item.id) }}">
+      Your browser can’t play this video.
+    </video>
+    {% elif item.mime_type and item.mime_type.startswith('audio/') %}
+    <audio id="snap-player" controls autoplay preload="auto"
+           src="{{ url_for('content.stream', content_id=item.id) }}">
+      Your browser can’t play this audio.
+    </audio>
+    {% elif item.mime_type and item.mime_type.startswith('image/') %}
+    <img class="media-still" src="{{ url_for('content.stream', content_id=item.id) }}" alt="{{ item.title }}">
+    {% else %}
+    <p class="muted">Preview not available for this file type — use Stream / view or Download.</p>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <div class="actions">
+    {% if caps.stream %}
+    <a class="btn" href="{{ url_for('content.stream', content_id=item.id) }}" target="_blank" rel="noopener">
+      <img class="btn-snap" src="{{ url_for('static', filename='inspo/snaps/snap_2.jpg') }}" alt="">
+      Open file
+    </a>
+    {% endif %}
+    {% if caps.download %}
+    <a class="btn secondary" href="{{ url_for('content.download', content_id=item.id) }}">
+      <img class="btn-snap" src="{{ url_for('static', filename='inspo/snaps/snap_1.jpg') }}" alt="">
+      Download
+    </a>
+    {% endif %}
+    {% if is_owner or caps.manage %}
+    <a class="btn secondary" href="{{ url_for('content.edit', content_id=item.id) }}">Edit</a>
+    <a class="btn secondary" href="{{ url_for('content.permissions', content_id=item.id) }}">Permissions</a>
+    <a class="btn secondary" href="{{ url_for('logs.item_log', content_id=item.id) }}">Access log</a>
+    {% endif %}
+  </div>
+</div>
+<script>
+(function () {
+  var p = document.getElementById("snap-player");
+  if (!p || !p.play) return;
+  var tryPlay = p.play();
+  if (tryPlay && tryPlay.catch) {
+    tryPlay.catch(function () {
+      p.muted = true;
+      return p.play();
+    });
+  }
+})();
+</script>
+{% endblock %}

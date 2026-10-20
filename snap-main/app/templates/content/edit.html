@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Edit {{ item.title }} — SNAP Records{% endblock %}
+{% block body %}
+<h1>Edit content</h1>
+<form method="post" enctype="multipart/form-data" class="panel">
+  <label>Title</label>
+  <input type="text" name="title" value="{{ item.title }}" required>
+  <label>Description</label>
+  <textarea name="description">{{ item.description or '' }}</textarea>
+  <label>Section</label>
+  <select name="category" required>
+    {% for c in categories %}
+    <option value="{{ c }}" {% if c == item.category %}selected{% endif %}>{{ category_labels.get(c, c) }}</option>
+    {% endfor %}
+  </select>
+  <label>Audience level</label>
+  <select name="audience_level" required>
+    {% for a in audiences %}
+    <option value="{{ a }}" {% if a == item.audience_level %}selected{% endif %}>{{ a }}</option>
+    {% endfor %}
+  </select>
+  <label>Available from (press)</label>
+  <input type="datetime-local" name="available_from_press"
+    value="{{ item.available_from_press.strftime('%Y-%m-%dT%H:%M') if item.available_from_press else '' }}">
+  <label>Available from (fans)</label>
+  <input type="datetime-local" name="available_from_fans"
+    value="{{ item.available_from_fans.strftime('%Y-%m-%dT%H:%M') if item.available_from_fans else '' }}">
+  <label class="check"><input type="checkbox" name="is_public" value="1" {% if item.is_public %}checked{% endif %}> Mark public</label>
+  <label>Replace file (optional)</label>
+  <input type="file" name="file">
+  <p class="muted">Current: {{ item.original_filename }}</p>
+  <button type="submit">Save</button>
+</form>
+<form method="post" class="panel" onsubmit="return confirm('Soft-delete this item?');">
+  <input type="hidden" name="delete" value="1">
+  <button type="submit" class="danger">Soft-delete</button>
+</form>
+{% endblock %}

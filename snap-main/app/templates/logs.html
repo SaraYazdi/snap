@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Access log — SNAP Records{% endblock %}
+{% block body %}
+<h1>Access log{% if item %} — {{ item.title }}{% endif %}</h1>
+{% if content_id and not item %}
+<p class="muted">Filtered to content {{ content_id }}</p>
+{% endif %}
+<table class="panel">
+  <thead>
+    <tr>
+      <th>Time</th>
+      <th>User</th>
+      <th>Content</th>
+      <th>Action</th>
+      <th>Outcome</th>
+      <th>Reason</th>
+      <th>IP</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for log in logs %}
+    <tr>
+      <td class="mono">{{ log.at }}</td>
+      <td>{{ log.user.display_name if log.user else '—' }}</td>
+      <td>
+        {% if log.content_item %}
+        <a href="{{ url_for('content.detail', content_id=log.content_item_id) }}">{{ log.content_item.title }}</a>
+        {% else %}—{% endif %}
+      </td>
+      <td>{{ log.action }}</td>
+      <td class="{% if log.outcome == 'allowed' %}allowed{% else %}denied{% endif %}">{{ log.outcome }}</td>
+      <td class="muted">{{ log.deny_reason or '' }}</td>
+      <td class="mono muted">{{ log.ip_address or '' }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="7" class="muted">No log entries.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

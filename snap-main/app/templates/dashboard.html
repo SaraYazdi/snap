@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — SNAP Records{% endblock %}
+{% block body %}
+<h1>SNAP Records</h1>
+<p class="hero-note">New Music · Merch · Band Pages · News</p>
+
+{% if not has_content %}
+<div class="panel"><p>Nothing in your feed yet. Stick around.</p></div>
+{% endif %}
+
+{% for key, section in sections.items() %}
+  {% if section.entries %}
+    <h2>{{ section.label }}</h2>
+    <ul class="item-list panel">
+      {% for item in section.entries %}
+      <li>
+        <a href="{{ url_for('content.detail', content_id=item.id) }}">{{ item.title }}</a>
+        <span class="tag-row">
+          <span class="tag tag-meta">{{ item.band.name }}</span>
+          <span class="tag tag-access is-{{ item.audience_level }}">
+            {{ {
+              'public': 'Public',
+              'fan_club': 'Fan club',
+              'press': 'Press',
+              'crew': 'Crew',
+              'band': 'Band only',
+              'restricted': 'Restricted'
+            }.get(item.audience_level, item.audience_level) }}
+          </span>
+        </span>
+      </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endfor %}
+
+{% if orphan %}
+  <h2>Other</h2>
+  <ul class="item-list panel">
+    {% for item in orphan %}
+    <li>
+      <a href="{{ url_for('content.detail', content_id=item.id) }}">{{ item.title }}</a>
+      <span class="tag">{{ item.category }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+{% endif %}
+{% endblock %}

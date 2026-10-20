@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Admin — SNAP Records{% endblock %}
+{% block body %}
+<h1>Administration</h1>
+<p class="muted">{{ label.name }} · single-label portal</p>
+
+<h2>Bands</h2>
+<table class="panel">
+  <thead><tr><th>Name</th><th>Slug</th><th>Bio</th></tr></thead>
+  <tbody>
+    {% for b in bands %}
+    <tr><td>{{ b.name }}</td><td class="mono">{{ b.slug }}</td><td class="muted">{{ b.bio or '' }}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+<form method="post" action="{{ url_for('admin.create_band') }}" class="panel">
+  <label>New band name</label>
+  <input name="name" required>
+  <label>Slug</label>
+  <input name="slug" required>
+  <label>Bio</label>
+  <input name="bio">
+  <button type="submit">Create band</button>
+</form>
+
+<h2>Invite professional</h2>
+<form method="post" action="{{ url_for('admin.invite') }}" class="panel">
+  <label>Email</label>
+  <input type="email" name="email" required>
+  <label>Role</label>
+  <select name="role">
+    {% for r in roles %}<option value="{{ r }}">{{ r }}</option>{% endfor %}
+  </select>
+  <label>Band</label>
+  <select name="band_id">
+    <option value="">— (admin only)</option>
+    {% for b in bands %}<option value="{{ b.id }}">{{ b.name }}</option>{% endfor %}
+  </select>
+  <button type="submit">Create invite</button>
+</form>
+
+{% if invites %}
+<h3>Recent invites</h3>
+<table class="panel">
+  <thead><tr><th>Email</th><th>Role</th><th>Status</th><th>Expires</th></tr></thead>
+  <tbody>
+    {% for i in invites %}
+    <tr>
+      <td>{{ i.email }}</td>
+      <td>{{ i.intended_role }}</td>
+      <td>{{ i.status }}</td>
+      <td class="mono muted">{{ i.expires_at }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+<h2>Users</h2>
+{% for u in users %}
+<div class="panel">
+  <strong>{{ u.display_name }}</strong>
+  <span class="muted"> · {{ u.email }} · {{ u.account_type }} · {{ u.status }}
+    {% if u.email_verified %}· verified{% endif %}
+  </span>
+  <p>
+    {% for m in u.memberships %}
+    <span class="tag">{{ m.role }}{% if m.band %} @ {{ m.band.name }}{% else %} (label){% endif %}</span>
+    {% else %}
+    <span class="muted">No memberships</span>
+    {% endfor %}
+  </p>
+  <form method="post" action="{{ url_for('admin.update_user', user_id=u.id) }}">
+    <label>Status</label>
+    <select name="status">
+      {% for s in ['active', 'pending', 'disabled'] %}
+      <option value="{{ s }}" {% if u.status == s %}selected{% endif %}>{{ s }}</option>
+      {% endfor %}
+    </select>
+    <label class="check"><input type="checkbox" name="verify" value="1"> Mark email verified</label>
+    <label>Add role</label>
+    <select name="add_role">
+      <option value="">—</option>
+      {% for r in roles %}<option value="{{ r }}">{{ r }}</option>{% endfor %}
+    </select>
+    <label>Band for role</label>
+    <select name="band_id">
+      <option value="">—</option>
+      {% for b in bands %}<option value="{{ b.id }}">{{ b.name }}</option>{% endfor %}
+    </select>
+    <label>Remove membership id</label>
+    <select name="remove_membership">
+      <option value="">—</option>
+      {% for m in u.memberships %}
+      <option value="{{ m.id }}">{{ m.role }}{% if m.band %} @ {{ m.band.name }}{% endif %}</option>
+      {% endfor %}
+    </select>
+    <button type="submit">Update user</button>
+  </form>
+</div>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,11 @@
+.venv
+venv
+__pycache__
+*.pyc
+.git
+uploads
+*.db
+.cursor
+docs
+*.pdf
+.env

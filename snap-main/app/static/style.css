@@ -1,0 +1,526 @@
+/* SNAP Records — punk zine + post-it collage */
+:root {
+  --ink: #101010;
+  --paper: #f4e7c3;
+  --paper-deep: #e8d5a3;
+  --postit-yellow: #ffe566;
+  --postit-pink: #ff6bcb;
+  --postit-green: #b8ff3c;
+  --postit-blue: #7ec8ff;
+  --postit-orange: #ff9f43;
+  --tape: rgba(255, 255, 255, 0.45);
+  --red: #e1193a;
+  --muted: #5a5348;
+  --line: #1a1a1a;
+  --ok: #2f7a3e;
+  --err: #b02020;
+  --font-body: "Space Grotesk", "Trebuchet MS", sans-serif;
+  --font-display: "Archivo Black", Impact, sans-serif;
+  --font-marker: "Permanent Marker", "Comic Sans MS", cursive;
+  --shadow-scrap: 4px 5px 0 #000;
+  --shadow-soft: 3px 3px 0 rgba(0, 0, 0, 0.35);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background-color: #1a1510;
+  background-image:
+    linear-gradient(rgba(20, 14, 8, 0.72), rgba(20, 14, 8, 0.82)),
+    url("inspo/bg/barcelona.jpg");
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9990;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+a { color: var(--red); text-decoration: none; font-weight: 600; }
+a:hover { text-decoration: underline; text-decoration-thickness: 3px; }
+
+/* —— chrome —— */
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 1.25rem;
+  background: var(--postit-yellow);
+  border-bottom: 4px solid #000;
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.25);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transform: rotate(-0.4deg);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 2.5vw, 1.55rem);
+  letter-spacing: 0.02em;
+  color: #000;
+  text-transform: uppercase;
+  text-decoration: none;
+  transform: rotate(-2deg);
+}
+.brand:hover { text-decoration: none; color: var(--red); }
+.brand-snap {
+  width: 42px;
+  height: 42px;
+  object-fit: cover;
+  border: 3px solid #000;
+  background: #fff;
+  box-shadow: 2px 2px 0 #000;
+  transform: rotate(6deg);
+}
+
+nav {
+  display: flex;
+  gap: 0.55rem;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 0.9rem;
+}
+
+nav a.nav-scrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.7rem;
+  background: var(--postit-green);
+  color: #000;
+  border: 2.5px solid #000;
+  box-shadow: 2px 2px 0 #000;
+  font-family: var(--font-marker);
+  font-size: 0.95rem;
+  text-decoration: none;
+  transform: rotate(-2deg);
+}
+nav a.nav-scrap:nth-child(2n) {
+  background: var(--postit-pink);
+  transform: rotate(2deg);
+}
+nav a.nav-scrap:nth-child(3n) {
+  background: var(--postit-blue);
+  transform: rotate(-1deg);
+}
+nav a.nav-scrap:hover {
+  transform: rotate(0deg) scale(1.05);
+  text-decoration: none;
+}
+.nav-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: cover;
+  border: 1.5px solid #000;
+  background: #fff;
+}
+
+.who {
+  font-family: var(--font-marker);
+  color: #000;
+  background: #fff;
+  border: 2px dashed #000;
+  padding: 0.2rem 0.55rem;
+  transform: rotate(1.5deg);
+}
+
+.wrap {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 1.75rem 1.25rem 3.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* —— type —— */
+h1 {
+  margin: 0 0 0.85rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  line-height: 0.95;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  color: var(--postit-yellow);
+  text-shadow: 3px 3px 0 #000, -1px -1px 0 #000;
+  transform: rotate(-1.5deg);
+  display: inline-block;
+}
+h2 {
+  margin: 1.6rem 0 0.6rem;
+  font-family: var(--font-marker);
+  font-size: 1.45rem;
+  color: var(--postit-pink);
+  text-shadow: 2px 2px 0 #000;
+  transform: rotate(1deg);
+  display: inline-block;
+  background: #000;
+  padding: 0.15rem 0.55rem;
+}
+h3 {
+  margin: 1rem 0 0.4rem;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--postit-green);
+  background: #000;
+  display: inline-block;
+  padding: 0.2rem 0.45rem;
+  transform: rotate(-1deg);
+}
+
+.muted { color: rgba(244, 231, 195, 0.88); }
+.panel .muted,
+.auth-box .muted,
+table .muted { color: var(--muted); }
+.hero-note {
+  display: inline-block;
+  max-width: 28rem;
+  background: var(--postit-yellow);
+  color: #000;
+  border: 3px solid #000;
+  padding: 0.65rem 0.85rem;
+  box-shadow: var(--shadow-scrap);
+  font-family: var(--font-marker);
+  transform: rotate(-1.5deg);
+  margin-bottom: 1.25rem;
+}
+
+/* —— post-it panels —— */
+.panel {
+  position: relative;
+  background: var(--paper);
+  border: 3px solid #000;
+  border-radius: 2px;
+  padding: 1.15rem 1.25rem;
+  margin-bottom: 1.15rem;
+  box-shadow: var(--shadow-scrap);
+  transform: rotate(-0.6deg);
+}
+.panel:nth-of-type(even) {
+  background: var(--paper-deep);
+  transform: rotate(0.7deg);
+}
+.panel::before {
+  content: "";
+  position: absolute;
+  top: -12px;
+  left: 28%;
+  width: 72px;
+  height: 22px;
+  background: var(--tape);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  transform: rotate(-4deg);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.flash {
+  padding: 0.7rem 0.9rem;
+  margin: 0 0 1rem;
+  border: 3px solid #000;
+  font-family: var(--font-marker);
+  box-shadow: var(--shadow-soft);
+  transform: rotate(-1deg);
+}
+.flash-error { background: #ffb4b4; color: #4a0000; }
+.flash-ok { background: var(--postit-green); color: #12300a; }
+
+label {
+  display: block;
+  margin: 0.75rem 0 0.25rem;
+  font-family: var(--font-marker);
+  font-size: 0.95rem;
+  color: #000;
+}
+input, select, textarea {
+  font: inherit;
+  color: #000;
+  background: #fffef6;
+  border: 2.5px solid #000;
+  border-radius: 0;
+  padding: 0.55rem 0.65rem;
+  width: 100%;
+  max-width: 28rem;
+  box-shadow: 2px 2px 0 #000;
+}
+textarea { min-height: 5rem; max-width: 40rem; }
+input:focus, select:focus, textarea:focus {
+  outline: 3px solid var(--postit-pink);
+  outline-offset: 1px;
+}
+
+button, .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: auto;
+  cursor: pointer;
+  background: var(--postit-pink);
+  color: #000;
+  border: 3px solid #000;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+  padding: 0.55rem 0.95rem;
+  margin-top: 0.85rem;
+  margin-right: 0.45rem;
+  box-shadow: 3px 3px 0 #000;
+  text-decoration: none;
+  transform: rotate(-1.5deg);
+}
+button:hover, .btn:hover {
+  transform: rotate(0deg) translate(-1px, -1px);
+  box-shadow: 4px 4px 0 #000;
+  text-decoration: none;
+  color: #000;
+}
+button.secondary, .btn.secondary {
+  background: var(--postit-blue);
+}
+button.danger, .btn.danger {
+  background: var(--red);
+  color: #fff;
+}
+.btn-snap {
+  width: 28px;
+  height: 28px;
+  object-fit: cover;
+  border: 2px solid #000;
+  background: #fff;
+}
+
+.check { display: flex; align-items: center; gap: 0.5rem; max-width: none; }
+.check input { width: auto; box-shadow: none; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+  background: var(--paper);
+  border: 3px solid #000;
+  box-shadow: var(--shadow-scrap);
+}
+th, td {
+  text-align: left;
+  padding: 0.55rem 0.5rem;
+  border-bottom: 2px solid #000;
+}
+th {
+  background: var(--postit-green);
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.mono { font-family: ui-monospace, monospace; font-size: 0.85rem; }
+.actions { display: flex; flex-wrap: wrap; gap: 0.45rem; margin: 1rem 0; }
+
+.tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  padding: 0.18rem 0.5rem;
+  border: 2px solid #000;
+  background: var(--postit-yellow);
+  color: #000;
+  font-family: var(--font-marker);
+  margin-right: 0.25rem;
+  transform: rotate(-2deg);
+}
+.tag-meta:nth-child(even) {
+  background: var(--postit-green);
+  transform: rotate(2deg);
+}
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.5rem;
+  margin: 0.55rem 0;
+}
+.tag-row-access {
+  margin-top: 0.15rem;
+}
+.tag-group-label {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #000;
+  background: #fff;
+  border: 2px solid #000;
+  padding: 0.15rem 0.4rem;
+  transform: rotate(-1deg);
+}
+.tag-access {
+  background: var(--postit-pink);
+  transform: rotate(1.5deg);
+}
+.tag-access.is-public {
+  background: var(--postit-blue);
+}
+.tag-access.is-restricted,
+.tag-access.is-band {
+  background: #ff6b6b;
+  color: #111;
+}
+.tag-access.is-press,
+.tag-access.is-crew,
+.tag-access.is-fan_club {
+  background: var(--postit-orange);
+}
+
+.item-list { list-style: none; padding: 0; margin: 0; }
+.item-list li {
+  padding: 0.65rem 0.35rem;
+  border-bottom: 2px dashed rgba(0, 0, 0, 0.35);
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.item-list li:last-child { border-bottom: none; }
+.item-list a {
+  color: #000;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  text-transform: uppercase;
+}
+.item-list a:hover { color: var(--red); }
+
+.auth-box {
+  max-width: 26rem;
+  margin: 2.5rem auto;
+  background: var(--postit-yellow);
+  transform: rotate(-1.2deg);
+}
+.auth-box h1 {
+  text-align: center;
+  color: #000;
+  text-shadow: 2px 2px 0 var(--postit-pink);
+  width: 100%;
+}
+.auth-box .muted { color: #333; text-align: center; }
+.auth-box::before { left: 36%; background: rgba(255, 107, 203, 0.35); }
+.hint { font-size: 0.9rem; color: #222; margin-top: 1rem; font-family: var(--font-marker); }
+
+.denied { color: var(--err); font-weight: 700; }
+.allowed { color: var(--ok); font-weight: 700; }
+
+/* Transparent instrument stickers (AVIF cutouts — no photo frame) */
+.sticker-deco {
+  position: fixed;
+  width: min(140px, 24vw);
+  height: auto;
+  border: none;
+  outline: none;
+  background: transparent;
+  box-shadow: none;
+  pointer-events: none;
+  z-index: 2;
+  filter: drop-shadow(3px 4px 0 rgba(0, 0, 0, 0.75));
+  opacity: 0.95;
+}
+.sticker-deco.guitar {
+  top: 5.2rem;
+  right: 1.2rem;
+  width: min(160px, 26vw);
+  transform: rotate(12deg);
+}
+.sticker-deco.mic {
+  top: 42%;
+  left: 0.4rem;
+  width: min(90px, 16vw);
+  transform: rotate(-18deg);
+}
+.sticker-deco.snare {
+  bottom: 3.5rem;
+  right: 2rem;
+  width: min(120px, 20vw);
+  transform: rotate(-8deg);
+}
+.sticker-deco.sticks {
+  bottom: 8rem;
+  left: 1.5rem;
+  width: min(110px, 18vw);
+  transform: rotate(22deg);
+}
+
+@media (max-width: 720px) {
+  .sticker-deco { display: none; }
+  .top { transform: none; flex-direction: column; align-items: flex-start; }
+  nav a.nav-scrap { transform: none !important; }
+}
+
+.media-stage {
+  margin: 1rem 0;
+  border: 3px solid #000;
+  background: #111;
+  box-shadow: 3px 3px 0 #000;
+  overflow: hidden;
+}
+.media-stage video,
+.media-stage .media-still {
+  display: block;
+  width: 100%;
+  max-height: 420px;
+  object-fit: contain;
+  background: #111;
+}
+.media-stage audio {
+  display: block;
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--postit-yellow);
+}
+
+/* —— reaction flash overlay —— */
+#reaction-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  background: rgba(0, 0, 0, 0.55);
+  transition: opacity 0.55s ease, visibility 0.55s ease;
+}
+#reaction-flash.is-on {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.08s linear, visibility 0.08s linear;
+}
+#reaction-flash img {
+  max-width: min(420px, 78vw);
+  max-height: min(420px, 70vh);
+  object-fit: contain;
+  border: 6px solid #fff;
+  outline: 4px solid #000;
+  box-shadow: 10px 12px 0 #000;
+  transform: rotate(-3deg) scale(0.92);
+  transition: transform 0.08s linear;
+}
+#reaction-flash.is-on img {
+  transform: rotate(2deg) scale(1);
+}
