@@ -30,6 +30,7 @@ from app.models import (
     User,
 )
 from app.policy import can_access, can_upload, log_access
+from app.crypto import encrypt_data
 
 bp = Blueprint("content", __name__, url_prefix="/content")
 
@@ -49,11 +50,11 @@ def _store_file(file_storage, item_id):
     folder.mkdir(parents=True, exist_ok=True)
     name = secure_filename(file_storage.filename) or "upload.bin"
     path = folder / name
-    file_storage.save(path)
-    data = path.read_bytes()
-    checksum = hashlib.sha256(data).hexdigest()
+    ciphertext, wrapped_dek = encrypt_data(file_storage.read())
+    path.write_bytes(ciphertext)
+    checksum = hashlib.sha256(ciphertext).hexdigest()
     mime = file_storage.mimetype or mimetypes.guess_type(name)[0]
-    return str(path), name, mime, len(data), checksum
+    return str(path), name, mime, len(ciphertext), checksum, wrapped_dek
 
 
 @bp.route("/upload", methods=["GET", "POST"])
@@ -85,12 +86,13 @@ def upload():
             )
             db.session.add(item)
             db.session.flush()
-            path, fname, mime, size, checksum = _store_file(f, item.id)
+            path, fname, mime, size, checksum, wrapped_dek = _store_file(f, item.id)
             item.storage_path = path
             item.original_filename = fname
             item.mime_type = mime
             item.size_bytes = size
             item.checksum_sha256 = checksum
+            item.wrapped_dek = wrapped_dek
             db.session.commit()
             flash("Uploaded.", "ok")
             return redirect(url_for("content.detail", content_id=item.id))
@@ -186,12 +188,13 @@ def edit(content_id):
                         os.remove(item.storage_path)
                     except OSError:
                         pass
-                path, fname, mime, size, checksum = _store_file(f, item.id)
+                path, fname, mime, size, checksum, wrapped_dek = _store_file(f, item.id)
                 item.storage_path = path
                 item.original_filename = fname
                 item.mime_type = mime
                 item.size_bytes = size
                 item.checksum_sha256 = checksum
+                item.wrapped_dek = wrapped_dek
             db.session.commit()
             flash("Saved.", "ok")
             return redirect(url_for("content.detail", content_id=item.id))

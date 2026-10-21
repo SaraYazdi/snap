@@ -7,6 +7,7 @@ from flask_login import LoginManager
 
 from app.extensions import db
 from app.models import User
+from app.crypto import set_kek
 
 load_dotenv()
 
@@ -31,7 +32,8 @@ def create_app():
     upload.mkdir(parents=True, exist_ok=True)
     app.config["UPLOAD_FOLDER"] = str(upload)
     app.config["MAX_CONTENT_LENGTH"] = 100 * 1024 * 1024
-
+    app.config["CONTENT_KEK_PATH"] = os.getenv("CONTENT_KEK_PATH", "/run/secrets/content_kek")
+    set_kek(app.config["CONTENT_KEK_PATH"])
     db.init_app(app)
     login_manager.init_app(app)
 

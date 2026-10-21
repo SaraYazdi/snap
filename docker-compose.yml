@@ -1,3 +1,7 @@
+secrets:
+  content_kek:
+    file: ./secrets/content_kek
+
 services:
   db:
     image: postgres:16-alpine
@@ -22,6 +26,8 @@ services:
       FLASK_SECRET_KEY: dev-change-me
       DATABASE_URL: postgresql+psycopg2://snap:snap@db:5432/snap_records
       UPLOAD_FOLDER: /data/uploads
+    secrets:
+      - content_kek
     volumes:
       - uploads:/data/uploads
       - ./app:/app/app

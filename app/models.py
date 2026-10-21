@@ -131,6 +131,7 @@ class ContentItem(db.Model):
     size_bytes = db.Column(db.BigInteger)
     original_filename = db.Column(db.Text)
     storage_path = db.Column(db.Text, nullable=False)
+    wrapped_dek = db.Column(db.LargeBinary)  # AES-GCM sealed DEK (nonce|tag|dek)
     checksum_sha256 = db.Column(db.Text)
     available_from_press = db.Column(db.DateTime(timezone=True))
     available_from_fans = db.Column(db.DateTime(timezone=True))
